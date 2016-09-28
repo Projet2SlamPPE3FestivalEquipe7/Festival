@@ -106,13 +106,12 @@ function verifierDonneesEtabC($id, $nom, $adresseRue, $codePostal, $ville, $tel,
             if (EtablissementDAO::isAnExistingId($id)) {
                 ajouterErreur("L'établissement $id existe déjà");
             }
+                       if(!estLettresUniquement($nom)){
+                           ajouterErreur("Le nom de l'etablissement contient des caractères invalides !");
+                       }
                        
-    }
     
-    if(estLettresUniquement($nom)){
-        ajouterErreur("Le nom de l'etablissement contient des caractères invalides !");
     }
-    
     if ($nom != "" && EtablissementDAO::isAnExistingName(true, $id, $nom)) {
         ajouterErreur("L'établissement $nom existe déjà");
     }
