@@ -63,7 +63,14 @@ switch ($action) {
         $civiliteResponsable = $_REQUEST['civiliteResponsable'];
         $nomResponsable = $_REQUEST['nomResponsable'];
         $prenomResponsable = $_REQUEST['prenomResponsable'];
-
+        
+         if(filter_var($adresseElectronique, FILTER_VALIDATE_EMAIL)){   
+        //L'email est bonne
+        }else{
+            echo "L'adresse est invalide";
+            break;
+        }
+        
         if ($action == 'validerCreerEtab') {
             verifierDonneesEtabC($id, $nom, $adresseRue, $codePostal, $ville, $tel, $nomResponsable);
             if (nbErreurs() == 0) {
