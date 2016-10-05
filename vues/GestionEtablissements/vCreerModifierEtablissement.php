@@ -40,7 +40,7 @@ if ($action == 'demanderModifierEtab') {
     $type = $unEtab->getTypeEtab();
     $civiliteResponsable = $unEtab->getCiviliteResp();
     $nomResponsable = $unEtab->getNomResp();
-    $prenomResponsable = $unEtab->getPrenomResp();          
+    $prenomResponsable = $unEtab->getPrenomResp();   
 }
 
 // Initialisations en fonction du mode (création ou modification) 
