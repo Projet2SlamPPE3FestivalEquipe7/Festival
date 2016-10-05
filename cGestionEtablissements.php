@@ -65,10 +65,7 @@ switch ($action) {
         $civiliteResponsable = $_REQUEST['civiliteResponsable'];
         $nomResponsable = $_REQUEST['nomResponsable'];
         $prenomResponsable = $_REQUEST['prenomResponsable'];
-        
-        if(!estLettresUniquement($nom)){
-            ajouterErreur("Le nom de l'etablissement contient des caractères invalides !");
-        }
+       
         
         if ($action == 'validerCreerEtab') {
             verifierDonneesEtabC($id, $nom, $adresseRue, $codePostal, $ville, $tel, $nomResponsable, $adresseElectronique);
@@ -117,7 +114,7 @@ function verifierDonneesEtabC($id, $nom, $adresseRue, $codePostal, $ville, $tel,
     if(!estLettresUniquement($nom)){
         ajouterErreur("Le nom de l'etablissement contient des caractères invalides !");
     }
-    
+//    
     if ($nom != "" && EtablissementDAO::isAnExistingName(true, $id, $nom)) {
         ajouterErreur("L'établissement $nom existe déjà");
     }
