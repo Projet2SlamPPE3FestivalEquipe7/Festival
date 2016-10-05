@@ -65,15 +65,12 @@ switch ($action) {
         $civiliteResponsable = $_REQUEST['civiliteResponsable'];
         $nomResponsable = $_REQUEST['nomResponsable'];
         $prenomResponsable = $_REQUEST['prenomResponsable'];
-        
-        if(!estLettresUniquement($nom)){
-            ajouterErreur("Le nom de l'etablissement contient des caractères invalides !");
-        }
+       
         
         if ($action == 'validerCreerEtab') {
             verifierDonneesEtabC($id, $nom, $adresseRue, $codePostal, $ville, $tel, $nomResponsable, $adresseElectronique);
             if (nbErreurs() == 0) {
-                $unEtab = new Etablissement($id, $nom, $adresseRue, $codePostal, $ville, $tel, $adresseElectronique, $type, $civiliteResponsable, $nomResponsable, $prenomResponsable);
+                $unEtab = new Etablissement($id, $nom, $adresseRue, $codePostal, $ville, $tel, $adresseElectronique, $type, $civiliteResponsable, strtoupper($nomResponsable), strtoupper($prenomResponsable));
                 EtablissementDAO::insert($unEtab);
                 include("vues/GestionEtablissements/vObtenirEtablissements.php");
             } else {
@@ -82,7 +79,7 @@ switch ($action) {
         } else {
             verifierDonneesEtabM($id, $nom, $adresseRue, $codePostal, $ville, $tel, $nomResponsable, $adresseElectronique);
             if (nbErreurs() == 0) {
-                $unEtab = new Etablissement($id, $nom, $adresseRue, $codePostal, $ville, $tel, $adresseElectronique, $type, $civiliteResponsable, $nomResponsable, $prenomResponsable);
+                $unEtab = new Etablissement($id, $nom, $adresseRue, $codePostal, $ville, $tel, $adresseElectronique, $type, $civiliteResponsable, strtoupper($nomResponsable), strtoupper($prenomResponsable));
                 EtablissementDAO::update($id, $unEtab);
                 include("vues/GestionEtablissements/vObtenirEtablissements.php");
             } else {
@@ -117,7 +114,7 @@ function verifierDonneesEtabC($id, $nom, $adresseRue, $codePostal, $ville, $tel,
     if(!estLettresUniquement($nom)){
         ajouterErreur("Le nom de l'etablissement contient des caractères invalides !");
     }
-    
+//    
     if ($nom != "" && EtablissementDAO::isAnExistingName(true, $id, $nom)) {
         ajouterErreur("L'établissement $nom existe déjà");
     }
