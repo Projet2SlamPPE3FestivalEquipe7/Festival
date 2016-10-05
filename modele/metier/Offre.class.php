@@ -34,4 +34,8 @@ class Offre {
     function setIdTypeChambre($idTypeChambre) {
         $this->idTypeChambre = $idTypeChambre;
     }
+    
+    function setNbChambres($nbChambres) {
+        $this->nbChambres = $nbChambres;
+    }
 }
