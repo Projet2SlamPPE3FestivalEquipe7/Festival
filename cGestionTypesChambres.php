@@ -1,4 +1,4 @@
-l<?php
+<?php
 
 /**
  * Contrôleur : gestion des types de chambres
