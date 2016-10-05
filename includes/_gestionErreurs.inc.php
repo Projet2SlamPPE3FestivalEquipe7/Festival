@@ -16,6 +16,10 @@ function razErreurs() {
     unset($_REQUEST['erreurs']);
 }
 
+function estUnEmail ($email) {
+     return preg_match('#^[\w.-]+@[\w.-]+\.[a-z]{2,6}$#i', $email);    
+}
+
 function ajouterErreur($msg) {
     if (!isset($_REQUEST['erreurs'])) {
         $_REQUEST['erreurs'] = array();
