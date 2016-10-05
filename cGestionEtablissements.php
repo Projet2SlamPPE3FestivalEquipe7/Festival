@@ -1,11 +1,13 @@
 <?php
+
 /**
  * Contrôleur : gestion des établissements
  */
 use modele\dao\EtablissementDAO;
 use modele\metier\Etablissement;
 use modele\dao\Bdd;
-require_once __DIR__.'/includes/autoload.php';
+
+require_once __DIR__ . '/includes/autoload.php';
 Bdd::connecter();
 
 include("includes/_gestionErreurs.inc.php");
@@ -63,16 +65,10 @@ switch ($action) {
         $civiliteResponsable = $_REQUEST['civiliteResponsable'];
         $nomResponsable = $_REQUEST['nomResponsable'];
         $prenomResponsable = $_REQUEST['prenomResponsable'];
-        
-         if(filter_var($adresseElectronique, FILTER_VALIDATE_EMAIL)){   
-        //L'email est bonne
-        }else{
-            echo "L'adresse est invalide";
-            break;
-        }
-        
+
+
         if ($action == 'validerCreerEtab') {
-            verifierDonneesEtabC($id, $nom, $adresseRue, $codePostal, $ville, $tel, $nomResponsable);
+            verifierDonneesEtabC($id, $nom, $adresseRue, $codePostal, $ville, $tel, $nomResponsable, $adresseElectronique);
             if (nbErreurs() == 0) {
                 $unEtab = new Etablissement($id, $nom, $adresseRue, $codePostal, $ville, $tel, $adresseElectronique, $type, $civiliteResponsable, $nomResponsable, $prenomResponsable);
                 EtablissementDAO::insert($unEtab);
@@ -81,7 +77,7 @@ switch ($action) {
                 include("vues/GestionEtablissements/vCreerModifierEtablissement.php");
             }
         } else {
-            verifierDonneesEtabM($id, $nom, $adresseRue, $codePostal, $ville, $tel, $nomResponsable);
+            verifierDonneesEtabM($id, $nom, $adresseRue, $codePostal, $ville, $tel, $nomResponsable, $adresseElectronique);
             if (nbErreurs() == 0) {
                 $unEtab = new Etablissement($id, $nom, $adresseRue, $codePostal, $ville, $tel, $adresseElectronique, $type, $civiliteResponsable, $nomResponsable, $prenomResponsable);
                 EtablissementDAO::update($id, $unEtab);
@@ -92,11 +88,10 @@ switch ($action) {
         }
         break;
 }
-
 // Fermeture de la connexion au serveur MySql
 Bdd::deconnecter();
 
-function verifierDonneesEtabC($id, $nom, $adresseRue, $codePostal, $ville, $tel, $nomResponsable) {
+function verifierDonneesEtabC($id, $nom, $adresseRue, $codePostal, $ville, $tel, $nomResponsable, $adresseElectronique) {
     if ($id == "" || $nom == "" || $adresseRue == "" || $codePostal == "" ||
             $ville == "" || $tel == "" || $nomResponsable == "") {
         ajouterErreur('Chaque champ suivi du caractère * est obligatoire');
@@ -116,12 +111,18 @@ function verifierDonneesEtabC($id, $nom, $adresseRue, $codePostal, $ville, $tel,
     if ($nom != "" && EtablissementDAO::isAnExistingName(true, $id, $nom)) {
         ajouterErreur("L'établissement $nom existe déjà");
     }
+    if ($adresseElectronique != "") {
+        if (!estUnEmail($adresseElectronique)) {
+            ajouterErreur("L'adresse e-mail est invalide");
+        }
+    }
+
     if ($codePostal != "" && !estUnCp($codePostal)) {
         ajouterErreur('Le code postal doit comporter 5 chiffres');
     }
 }
 
-function verifierDonneesEtabM($id, $nom, $adresseRue, $codePostal, $ville, $tel, $nomResponsable) {
+function verifierDonneesEtabM($id, $nom, $adresseRue, $codePostal, $ville, $tel, $nomResponsable, $adresseElectronique) {
     if ($nom == "" || $adresseRue == "" || $codePostal == "" || $ville == "" ||
             $tel == "" || $nomResponsable == "") {
         ajouterErreur('Chaque champ suivi du caractère * est obligatoire');
