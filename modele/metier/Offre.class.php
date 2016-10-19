@@ -4,35 +4,35 @@ namespace modele\metier;
 
 class Offre {
     
-    private $idEtab;        //id de l'établissement
-    private $idTypeChambre; //id type de chambre
+    private $unEtablissement;//type établissement
+    private $unTypeChambre; //type TypeChambre
     private $nbChambres;    //nombre de chambres disponible
     
-    function __construct($idEtab, $idTypeChambre, $nbChambres) {
-        $this->idEtab = $idEtab;
-        $this->idTypeChambre = $idTypeChambre;
+    function __construct($unEtablissement, $unTypeChambre, $nbChambres) {
+        $this->unEtablissement = $unEtablissement;
+        $this->unTypeChambre = $unTypeChambre;
         $this->nbChambres = $nbChambres;
         
     }
     
-    function getIdEtab() {
-        return $this->idEtab;
+    function getUnEtablissement() {
+        return $this->unEtablissement;
     }
     
-    function getIdTypeChambre() {
-        return $this->idTypeChambre;
+    function getuUnTypeChambre() {
+        return $this->unTypeChambre;
     }
     
     function getINbChambres() {
         return $this->nbChambres;
     }
     
-    function setIdEtab($idEtab) {
-        $this->idEtab = $idEtab;
+    function setUnEtablissement($unEtablissement) {
+        $this->unEtablissement = $unEtablissement;
     }
     
-    function setIdTypeChambre($idTypeChambre) {
-        $this->idTypeChambre = $idTypeChambre;
+    function setUnTypeChambre($unTypeChambre) {
+        $this->unTypeChambre = $unTypeChambre;
     }
     
     function setNbChambres($nbChambres) {

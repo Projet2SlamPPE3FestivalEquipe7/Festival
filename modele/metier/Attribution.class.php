@@ -4,47 +4,36 @@ namespace modele\metier;
 
 class Attribution {
     
-    private $idEtab;
-    private $idTypeChambre;
-    private $idGroupe;
+    private $uneOffre;
+    private $unGroupe;
     private $nombreChambres;
     
-    function __construct($idEtab, $idTypeChambre, $idGroupe, $nombreChambres){
-        $this->idEtab = $idEtab;
-        $this->idGroupe = $idGroupe;
-        $this->idTypeChambre = $idTypeChambre;
+    function __construct($uneOffre, $unGroupe, $nombreChambres){
+        $this->uneOffre = $uneOffre;
+        $this->unGroupe = $unGroupe;
         $this->nombreChambres = $nombreChambres;
     }
-    
-    function getIdEtab(){
-        return $this->idEtab;
+    function getUneOffre() {
+        return $this->uneOffre;
     }
-    
-    function getIdGroupe(){
-        return $this->idGroupe;
+
+    function getUnGroupe() {
+        return $this->unGroupe;
     }
-    
-    function getIdTypeChambre(){
-        return $this->idTypeChambre;
-    }
-    
-    function getNombreChambres(){
+
+    function getNombreChambres() {
         return $this->nombreChambres;
     }
-    
-    function setIdEtab($idEtab){
-        $this->idEtab = $idEtab;
+
+    function setUneOffre($uneOffre) {
+        $this->uneOffre = $uneOffre;
     }
-    
-    function setIdGroupe($idGroupe){
-        $this->idGroupe = $idGroupe;
+
+    function setUnGroupe($unGroupe) {
+        $this->unGroupe = $unGroupe;
     }
-    
-    function setIdTypeChambre($idTypeChambre){
-        $this->idTypeChambre = $idTypeChambre;
-    }
-    
-    function setNombreChambres ($nombreChambre){
-        $this->nombreChambres = $nombreChambre;
+
+    function setNombreChambres($nombreChambres) {
+        $this->nombreChambres = $nombreChambres;
     }
 }
