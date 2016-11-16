@@ -4,6 +4,8 @@ namespace modele\dao;
 
 use modele\metier\Offre;
 use PDO;
+use modele\dao\EtablissementDAO;
+use modele\dao\TypeChambreDAO;
 
 /**
  * Description of GroupeDAO
@@ -14,15 +16,38 @@ class OffreDAO implements IDAO {
 
 
     protected static function enregVersMetier($enreg) {
-        $unEtablissement = EtablissementDAO::getAll();
-        $unTypeChambre = TypeChambreDAO::getAll();
-        $nbChambres = $enreg['nombreChambres'];
-        
-        $uneOffre = new Offre($unEtablissement, $unTypeChambre, $nbChambres);
+        $nbChambres = $enreg['NOMBRECHAMBRES'];
+        $idEtab = $enreg['IDETAB'];
+        $idTypeChambre = $enreg['IDTYPECHAMBRE'];        
+        $unEtablissement = EtablissementDAO::getOneById($idEtab) ;       
+        $unTypeChambre = TypeChambreDAO::getOneById($idTypeChambre);
 
+                   
+        $uneOffre = new Offre($unEtablissement,$unTypeChambre, $nbChambres);
         return $uneOffre;
     }
 
+
+    protected static function metierVersEnreg($objetMetier, $stmt) {
+        // On utilise bindValue plutôt que bindParam pour éviter des variables intermédiaires
+        $stmt->bindValue(':idEtab', $objetMetier->getUnEtablissement()->getId());        
+        $stmt->bindValue(':idTypeChambre', $objetMetier->getUnTypeChambre()->getId());
+        $stmt->bindValue(':nombreChambres', $objetMetier->getNbChambres());
+               
+    }
+
+    public static function delete($id) {
+        $ok = false;
+        $requete = "DELETE FROM Offre WHERE idEtab = :IdEtab AND idTypeChambre = :IdTypeChambre";
+        $stmt = Bdd::getPdo()->prepare($requete);
+        $stmt->bindParam(':IdEtab', $idEtab);
+        $stmt->bindParam(':IdTypeChambre', $idTypeChambre);
+        $ok = $stmt->execute();
+        $ok = $ok && ($stmt->rowCount() > 0);
+        return $ok;      
+                
+        
+    }
 
     public static function getAll() {
         $lesObjets = array();
@@ -38,10 +63,13 @@ class OffreDAO implements IDAO {
     }
 
     public static function getOneById($id) {
-        $objetConstruit = null;
-        $requete = "SELECT * FROM Offrel WHERE ID = :id";
+        $objetConstruit = null;        
+        $idEtab = $id[0];
+        $idTypeChambre = $id[1];
+        $requete = "SELECT * FROM Offre WHERE idEtab = :idEtab AND idTypeChambre = :idTypeChambre";
         $stmt = Bdd::getPdo()->prepare($requete);
-        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':idEtab', $idEtab);
+        $stmt->bindParam(':idTypeChambre', $idTypeChambre);
         $ok = $stmt->execute();
         // attention, $ok = true pour un select ne retournant aucune ligne
         if ($ok && $stmt->rowCount() > 0) {
@@ -51,57 +79,34 @@ class OffreDAO implements IDAO {
     }
 
     public static function insert($objet) {
-        return false;
+        $unEtablissement = $objet->getUnEtablissement();
+        $unTypeChambre = $objet->getUnTypeChambre();
+        $nbChambres = $objet->getNbChambres();
+        $idEtab = $unEtablissement->getId();
+        $idTypeChambre = $unTypeChambre->getId();
+        $ok = false;
+        $requete = "INSERT INTO Offre VALUES (:idEtab, :idTypeChambre, :nombreChambres)";
+        $stmt = Bdd::getPdo()->prepare($requete);
+//        $stmt->bindParam(':IdEtab', $idEtab);
+//        $stmt->bindParam(':IdTypeChambre', $idTypeChambre);
+//        $stmt->bindParam(':NbChambres', $nbChambres);
+        self::metierVersEnreg($objet, $stmt);
+        $ok = $stmt->execute();
+        $ok = $ok && $stmt->rowCount() > 0;
+        return $ok;
     }
 
     public static function update($id, $objet) {
-        return false;
-    }
-    
-    public static function delete($id) {
-        return false;
-    }
-
-    /**
-     * Retourne la liste des groupes d'un établissement donné
-     * @param string $idEtab
-     * @return array
-     */
-    public static function getAllByEtablissement($idEtab) {
-        $lesGroupes = array();
-        $requete = "SELECT * FROM Groupe
-                    WHERE ID IN (
-                    SELECT DISTINCT ID FROM Groupe g
-                            INNER JOIN Attribution a ON a.IDGROUPE = g.ID 
-                            WHERE IDETAB=:id
-                    )";
+        
+          $ok = false;
+        $requete = "UPDATE  Offre SET idEtab=:IdEtab, IdTypeChambre=:IdTypeChambre,
+           NbChambres=:NbChambres
+           WHERE idEtab=:IdEtab";
         $stmt = Bdd::getPdo()->prepare($requete);
-        $stmt->bindParam(':id', $idEtab);
+        self::metierVersEnreg($objet, $stmt);
+        $stmt->bindParam(':idEtab', $Etablissement);
         $ok = $stmt->execute();
-        if ($ok) {
-            while ($enreg = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $lesGroupes[] = self::enregVersMetier($enreg);
-            }
-        } 
-        return $lesGroupes;
-    }
-
-    
-    /**
-     * Retourne la liste des groupes souhaitant un hébergement
-     * @return array liste des groupes souhaitant un hébergement, ordonnée par id
-     */
-    public static function getAllToHost() {
-        $lesGroupes = array();
-        $requete = "SELECT * FROM Groupe WHERE HEBERGEMENT='O' ORDER BY ID";
-        $stmt = Bdd::getPdo()->prepare($requete);
-        $ok = $stmt->execute();
-        if ($ok) {
-            while ($enreg = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $lesGroupes[] = self::enregVersMetier($enreg);
-            }
-        }
-        return $lesGroupes;
+        return ($ok && $stmt->rowCount() > 0); 
     }
 
 }

@@ -19,11 +19,11 @@ class Offre {
         return $this->unEtablissement;
     }
     
-    function getuUnTypeChambre() {
+    function getUnTypeChambre() {
         return $this->unTypeChambre;
     }
     
-    function getINbChambres() {
+    function getNbChambres() {
         return $this->nbChambres;
     }
     
