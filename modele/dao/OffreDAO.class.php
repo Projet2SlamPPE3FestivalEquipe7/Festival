@@ -108,5 +108,20 @@ class OffreDAO implements IDAO {
         $ok = $stmt->execute();
         return ($ok && $stmt->rowCount() > 0); 
     }
-
+    
+    public static function nbOffre($idEtab, $idTypeChambre){
+        
+    $req = "SELECT nombreChambres FROM Offre WHERE idEtab=:idEtab AND 
+    idTypeChambre=:idTypeChambre";
+    $stmt = $connexion->prepare($req);
+    $stmt->bindParam(':idEtab', $idEtab);
+    $stmt->bindParam(':idTypeChambre', $idTypeChambre);
+    $stmt->execute();
+    $ok = $stmt->fetchColumn();
+    if ($ok) {
+        return $ok;
+    } else {
+        return 0;
+    }
+}
 }
