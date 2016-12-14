@@ -14,7 +14,7 @@ interface IDAO {
     /**
      * Construire un objet d'après son identifiant, à partir des des enregistrements de la table visée
      * @param id identifiant de l'enregistrement dans la table correspondante
-     * @return objet métier si trouvé dans la BDD, null sinon
+     * @return objet métier si trouvé dans la BDD, snull sinon
      * Une Exception doit être déclenchée en cas d'erreur PDO
      */
     public static function getOneById($id) ;

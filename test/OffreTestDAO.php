@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>GroupeDAO : test</title>
+        <title>OffreTestDAO : test</title>
     </head>
 
     <body>
@@ -71,8 +71,8 @@ Tanguy');
          // Test n°4
         $unEtablissement = new Etablissement('0352072M', 'La Joliverie', '29 rue paul bellamy', '85110', '
 Chantonnay', 'abcdefghij', 'contact@la-joliverie.com', 1, '
-Monsieur', 'MENSSION', '
-Tanguy');
+Monsieur', 'LOUERAT', '
+Baptiste');
         $unTypeChambre = new TypeChambre("C1", "1 lit");
         $nbChambres = 3;
         try {

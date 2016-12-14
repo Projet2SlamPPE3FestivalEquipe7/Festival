@@ -4,7 +4,7 @@ namespace modele\metier;
 /**
  * Description of TypeChambre
  * Classification des chambres en fonction de leur capacité
- * @author btssio
+ * @author blouerat
  */
 class TypeChambre {
     private $id;

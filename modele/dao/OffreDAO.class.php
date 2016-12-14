@@ -3,50 +3,55 @@
 namespace modele\dao;
 
 use modele\metier\Offre;
+use PDOStatement;
 use PDO;
-use modele\dao\EtablissementDAO;
-use modele\dao\TypeChambreDAO;
 
 /**
- * Description of GroupeDAO
- * Classe métier :  Groupe
+ * Description of OffreDao
+ * Classe métier  :  Offre
  * @author btssio
  */
 class OffreDAO implements IDAO {
 
-
+    /**
+     * crée un objet métier à partir d'un enregistrement
+     * @param array $enreg Description
+     * @return Offre objet métier obtenu
+     */
     protected static function enregVersMetier($enreg) {
-        $nbChambres = $enreg['NOMBRECHAMBRES'];
-        $idEtab = $enreg['IDETAB'];
-        $idTypeChambre = $enreg['IDTYPECHAMBRE'];        
-        $unEtablissement = EtablissementDAO::getOneById($idEtab) ;       
-        $unTypeChambre = TypeChambreDAO::getOneById($idTypeChambre);
-
-                   
-        $uneOffre = new Offre($unEtablissement,$unTypeChambre, $nbChambres);
-        return $uneOffre;
+        $idEtab = $enreg[strtoupper('idEtab')];
+        $idTypeChambre = $enreg[strtoupper('idTypeChambre')];
+        $nombreChambres  = $enreg[strtoupper('nombreChambres')];;
+        $objetMetier = new Offre($idEtab, $idTypeChambre, $nombreChambres);
+        return $objetMetier;
     }
 
-
-    protected static function metierVersEnreg($objetMetier, $stmt) {
-        // On utilise bindValue plutôt que bindParam pour éviter des variables intermédiaires
-        $stmt->bindValue(':idEtab', $objetMetier->getUnEtablissement()->getId());        
-        $stmt->bindValue(':idTypeChambre', $objetMetier->getUnTypeChambre()->getId());
+    /**
+     * Complète une requête préparée
+     * les paramètres de la requête associés aux valeurs des attributs d'un objet métier
+     * @param \modele\metier\Offre $objetMetier
+     * @param \PDOStatement $stmt
+     */
+    protected static function metierVersEnreg(Offre $objetMetier, PDOStatement $stmt) {
+        $stmt->bindValue(':idEtab', $objetMetier->getIdEtab());
+        $stmt->bindValue(':idTypeChambre', $objetMetier->getTypeChambre());
         $stmt->bindValue(':nombreChambres', $objetMetier->getNbChambres());
-               
     }
 
-    public static function delete($id) {
-        $ok = false;
-        $requete = "DELETE FROM Offre WHERE idEtab = :IdEtab AND idTypeChambre = :IdTypeChambre";
+    public static function getOneById($id) {
+        $idEtab = $id['idEtab'];
+        $idTypeChambre = $id['idTypeChambre'];
+        $objetConstruit = null;
+        $requete = "SELECT * FROM Offre WHERE idEtab = :idEtab AND idTypeChambre = :idTypeChambre";
         $stmt = Bdd::getPdo()->prepare($requete);
-        $stmt->bindParam(':IdEtab', $idEtab);
-        $stmt->bindParam(':IdTypeChambre', $idTypeChambre);
+        $stmt->bindParam(':idEtab', $idEtab);
+        $stmt->bindParam(':idTypeChambre', $idTypeChambre);
         $ok = $stmt->execute();
-        $ok = $ok && ($stmt->rowCount() > 0);
-        return $ok;      
-                
-        
+        // attention, $ok = true pour un select ne retournant aucune ligne
+        if ($ok && $stmt->rowCount() > 0) {
+            $objetConstruit = self::enregVersMetier($stmt->fetch(PDO::FETCH_ASSOC));
+        }
+        return $objetConstruit;
     }
 
     public static function getAll() {
@@ -61,52 +66,61 @@ class OffreDAO implements IDAO {
         }
         return $lesObjets;
     }
-
-    public static function getOneById($id) {
-        $objetConstruit = null;        
-        $idEtab = $id[0];
-        $idTypeChambre = $id[1];
-        $requete = "SELECT * FROM Offre WHERE idEtab = :idEtab AND idTypeChambre = :idTypeChambre";
-        $stmt = Bdd::getPdo()->prepare($requete);
+    
+    public static function update($id, $objet) {       
+        $idEtab = $id['idEtab'];
+        $idTypeChambre = $id['idTypeChambre'];
+        $ok = false; 
+        $req = "UPDATE Offre SET nombreChambres=:nombreChambres WHERE idEtab=:idEtab AND idTypeChambre=:idTypeChambre";
+        $stmt = Bdd::getPdo()->prepare($req);
+        self::metierVersEnreg($objet, $stmt);
         $stmt->bindParam(':idEtab', $idEtab);
         $stmt->bindParam(':idTypeChambre', $idTypeChambre);
         $ok = $stmt->execute();
-        // attention, $ok = true pour un select ne retournant aucune ligne
-        if ($ok && $stmt->rowCount() > 0) {
-            $objetConstruit = self::enregVersMetier($stmt->fetch(PDO::FETCH_ASSOC));
-        }
-        return $objetConstruit;
-    }
-
-    public static function insert($objet) {
-        $unEtablissement = $objet->getUnEtablissement();
-        $unTypeChambre = $objet->getUnTypeChambre();
-        $nbChambres = $objet->getNbChambres();
-        $idEtab = $unEtablissement->getId();
-        $idTypeChambre = $unTypeChambre->getId();
-        $ok = false;
-        $requete = "INSERT INTO Offre VALUES (:idEtab, :idTypeChambre, :nombreChambres)";
-        $stmt = Bdd::getPdo()->prepare($requete);
-//        $stmt->bindParam(':IdEtab', $idEtab);
-//        $stmt->bindParam(':IdTypeChambre', $idTypeChambre);
-//        $stmt->bindParam(':NbChambres', $nbChambres);
-        self::metierVersEnreg($objet, $stmt);
-        $ok = $stmt->execute();
-        $ok = $ok && $stmt->rowCount() > 0;
+        $ok = $ok && ($stmt->rowCount() > 0);
         return $ok;
     }
-
-    public static function update($id, $objet) {
-        
-          $ok = false;
-        $requete = "UPDATE  Offre SET idEtab=:IdEtab, IdTypeChambre=:IdTypeChambre,
-           NbChambres=:NbChambres
-           WHERE idEtab=:IdEtab";
-        $stmt = Bdd::getPdo()->prepare($requete);
-        self::metierVersEnreg($objet, $stmt);
-        $stmt->bindParam(':idEtab', $Etablissement);
+    
+    public static function delete($id) {             
+        $idEtab = $id['idEtab'];
+        $idTypeChambre = $id['idTypeChambre'];
+        $ok = false;  
+        $req = "DELETE FROM Offre WHERE idEtab = :idEtab and idTypeChambre = :idTypeCh";
+        $stmt = Bdd::getPdo()->prepare($req);
+        $stmt->bindParam(':idEtab', $idEtab);
+        $stmt->bindParam(':idTypeCh', $idTypeChambre);
         $ok = $stmt->execute();
-        return ($ok && $stmt->rowCount() > 0); 
+        $ok = $ok && ($stmt->rowCount() > 0);
+        return $ok;
+    }
+    
+    public static function insert($objet) {
+        $ok = false; 
+        $req = "INSERT INTO Offre VALUES(:idEtab, :idTypeChambre, :nombreChambres)";
+        $stmt = Bdd::getPdo()->prepare($req);
+        self::metierVersEnreg($objet, $stmt);
+        $ok = $stmt->execute();
+        $ok = $ok && ($stmt->rowCount() > 0);
+        return $ok; 
+    }
+    
+    public static function obtenirNbOffre($idEtab, $idTypeChambre) {
+        $req = "SELECT nombreChambres FROM Offre WHERE idEtab=:idEtab AND idTypeChambre=:idTypeCh";
+        $stmt = Bdd::getPdo()->prepare($req);
+        $stmt->bindParam(':idEtab', $idEtab);
+        $stmt->bindParam(':idTypeCh', $idTypeChambre);
+        $stmt->execute();
+        $ok = $stmt->fetchColumn();
+        if ($ok) {
+            return $ok;
+        } else {
+            return 0;
+        } 
     }
 
+    public static function estModifOffreCorrecte($idEtab, $idTypeChambre, $nombreChambres) {
+        $nbOccup = AttributionDAO::obtenirNbOccup($idEtab, $idTypeChambre);
+        return ($nombreChambres >= $nbOccup);
+    }
 }
+

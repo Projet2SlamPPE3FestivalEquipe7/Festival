@@ -2,20 +2,26 @@
 /**
  * Contrôleur : gestion des offres d'hébergement
  */
+use modele\dao\OffreDAO;
+use modele\metier\Offre;
+use modele\dao\Bdd;
+require_once __DIR__ . '/includes/autoload.php';
+Bdd::connecter();
 
 include("includes/_gestionErreurs.inc.php");
-include("includes/gestionDonnees/_connexion.inc.php");
-include("includes/gestionDonnees/_gestionBaseFonctionsCommunes.inc.php");
 
-// 1ère étape (donc pas d'action choisie) : affichage du tableau des offres en 
-// lecture seule
+//Les includes suivants ne sont plus nécessaires :
+//include("includes/gestionDonnees/_connexion.inc.php");
+//include("includes/gestionDonnees/_gestionBaseFonctionsCommunes.inc.php");
+
+// On affiche les Offres dans un tableau
 if (!isset($_REQUEST['action'])) {
     $_REQUEST['action'] = 'initial';
 }
 
 $action = $_REQUEST['action'];
 
-// Aiguillage selon l'étape   
+//Switch en fonction de l'action 
 switch ($action) {
     case 'initial' :
         include("vues/OffreHebergement/vConsulterOffreHebergement.php");
@@ -37,12 +43,26 @@ switch ($action) {
             // attributions déjà effectuées pour cet établissement et ce type de
             // chambre, la modification n'est pas effectuée
             $entier = estEntier($nbChambres[$i]);
-            $modifCorrecte = estModifOffreCorrecte($connexion, $idEtab, $idTypeChambre[$i], $nbChambres[$i]);
+            //$modifCorrecte = estModifOffreCorrecte($connexion, $idEtab, $idTypeChambre[$i], $nbChambres[$i]);
+            $modifCorrecte = OffreDAO::estModifOffreCorrecte($idEtab, $idTypeChambre[$i], $nbChambres[$i]);
             if (!$entier || !$modifCorrecte) {
                 $err = true;
             } else {
-                modifierOffreHebergement
-                        ($connexion, $idEtab, $idTypeChambre[$i], $nbChambres[$i]);
+                $id = array('idEtab' => $idEtab, 'idTypeChambre' => $idTypeChambre[$i]);
+                $objet = new Offre($idEtab, $idTypeChambre[$i], $nbChambres[$i]);
+                if ($nbChambres[$i] == 0) {
+                    //$id = array('idEtab' => $idEtab, 'idTypeChambre' => $idTypeChambre[$i], 'nbChambresDemandees' => $nbChambres[$i]);
+                    OffreDAO::delete($id);
+                } else {
+                    $lgOffre = OffreDAO::obtenirNbOffre($idEtab, $idTypeChambre[$i]);
+                    if ($lgOffre != 0) {
+                        //OffreDAO::update($id, $nbChambres[$i]);
+                        OffreDAO::update($id, $objet);
+                    } else {                     
+                        OffreDAO::insert($objet);
+                    }
+                }
+                //modifierOffreHebergement($connexion, $idEtab, $idTypeChambre[$i], $nbChambres[$i]);
             }
         }
         if ($err) {
@@ -54,7 +74,8 @@ switch ($action) {
         }
         break;
 }
-
 // Fermeture de la connexion au serveur MySql
-$connexion = null;
+Bdd::deconnecter();
+//// Fermeture de la connexion au serveur MySql
+//$connexion = null;
 

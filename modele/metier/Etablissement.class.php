@@ -4,7 +4,7 @@ namespace modele\metier;
 /**
  * Description of Etablissement
  * un établissement a des capacités d'hébergement à offrir au festival
- * @author btssio
+ * @author blouerat
  */
 class Etablissement {
     /**

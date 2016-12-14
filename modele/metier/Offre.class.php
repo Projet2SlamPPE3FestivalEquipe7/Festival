@@ -1,41 +1,56 @@
 <?php
-
 namespace modele\metier;
 
+/**
+ * Description of Offre
+ *
+ * @author blouerat
+ */
 class Offre {
+     /**
+     * identifiant de l'établissement
+     * @var string
+     */
+    private $idEtab;
+     /**
+     * type de chambre
+     * @var string
+     */
+    private $typeChambre;
+     /**
+     * nombre de chambres
+     * @var int
+     */
+    private $nbChambres;
     
-    private $unEtablissement;//type établissement
-    private $unTypeChambre; //type TypeChambre
-    private $nbChambres;    //nombre de chambres disponible
     
-    function __construct($unEtablissement, $unTypeChambre, $nbChambres) {
-        $this->unEtablissement = $unEtablissement;
-        $this->unTypeChambre = $unTypeChambre;
+    function __construct($idEtab, $typeChambre, $nbChambres) {
+        $this->idEtab = $idEtab;
+        $this->typeChambre = $typeChambre;
         $this->nbChambres = $nbChambres;
-        
+    }
+    function getIdEtab() {
+        return $this->idEtab;
+    }
+
+    function getTypeChambre() {
+        return $this->typeChambre;
     }
     
-    function getUnEtablissement() {
-        return $this->unEtablissement;
-    }
-    
-    function getUnTypeChambre() {
-        return $this->unTypeChambre;
-    }
-    
-    function getNbChambres() {
+     function getNbChambres() {
         return $this->nbChambres;
     }
-    
-    function setUnEtablissement($unEtablissement) {
-        $this->unEtablissement = $unEtablissement;
+
+    function setIdEtab($idEtab) {
+        $this->idEtab = $idEtab;
     }
-    
-    function setUnTypeChambre($unTypeChambre) {
-        $this->unTypeChambre = $unTypeChambre;
+
+    function setTypeChambre($typeChambre) {
+        $this->typeChambre = $typeChambre;
     }
     
     function setNbChambres($nbChambres) {
         $this->nbChambres = $nbChambres;
     }
+
 }

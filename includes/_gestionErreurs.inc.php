@@ -12,16 +12,18 @@ function estChiffresOuEtLettres($valeur) {
     return preg_match('/[^a-zA-Z0-9]/', $valeur) != 1;
 }
 
-function estLettresUniquement($valeur){
+function estLettres($valeur) {
     return preg_match('/[^a-zA-Z]/', $valeur) != 1;
 }
 
+
+function estMail($valeur) {
+    return preg_match("/^[a-z0-9_\.-]+@([a-z0-9]+([\-]+[a-z0-9]+)*\.)+[a-z]{2,7}$/i",$valeur) != 1;
+}
+ 
+
 function razErreurs() {
     unset($_REQUEST['erreurs']);
-}
-
-function estUnEmail ($email) {
-     return preg_match('#^[\w.-]+@[\w.-]+\.[a-z]{2,6}$#i', $email);    
 }
 
 function ajouterErreur($msg) {

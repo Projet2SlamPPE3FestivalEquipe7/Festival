@@ -4,7 +4,7 @@ namespace modele\metier;
 /**
  * Description of Groupe
  * un groupe musical se produisant au festival
- * @author btssio
+ * @author blouerat
  */
 class Groupe {
     /**
