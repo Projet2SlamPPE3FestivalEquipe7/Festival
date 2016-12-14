@@ -79,8 +79,10 @@ foreach ($lesEtabOffrantChambres as $unEtab) {
     // sans fond particulier
     foreach ($lesTypesChambres as $unTypeChambre) {
         $idTypeChambre = $unTypeChambre->getId();
+
         //$nbOffre = obtenirNbOffre($connexion, $idEtab, $idTypeChambre);
         $nbOffre = OffreDAO::obtenirNbOffre($idEtab, $idTypeChambre);
+
         if ($nbOffre == 0) {
             // Affichage du type de chambre sur fond gris
             echo "<td class='absenceOffre'>$idTypeChambre<br>&nbsp;</td>";
