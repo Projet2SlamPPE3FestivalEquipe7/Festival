@@ -11,6 +11,8 @@
         <?php
 
         use modele\dao\OffreDAO;
+        use modele\dao\EtablissementDAO;
+        use modele\dao\TypeChambreDAO;
         use modele\dao\Bdd;
         use modele\metier\Etablissement;
         use modele\metier\Offre;
@@ -44,18 +46,32 @@ require_once __DIR__ . '/../includes/autoload.php';
 
 //        // Test n°3
         echo "<h3>3- insert</h3>";
-        $unEtablissement = new Etablissement('0352072M', 'La Joliverie', '29 rue paul bellamy', '85110', '
-Chantonnay', 'abcdefghij', 'contact@la-joliverie.com', 1, '
-Monsieur', 'MENSSION', '
-Tanguy');
-        $unTypeChambre = new TypeChambre("C1", "1 lit");
+        $idEtab = "0352072M";
+        $idTypeChambre = "C1";
+//        $objet3 = new Etablissement('0352072M', 'La Joliverie', '29 rue paul bellamy', '85110', '
+//        Chantonnay', 'abcdefghij', 'contact@la-joliverie.com', 1, '
+//        Monsieur', 'MENSSION', '
+//        Tanguy');
+//        $objet4 = new TypeChambre("C1", "1 lit");
+         try {
+            $unEtab = EtablissementDAO::getOneById($idEtab);
+            var_dump($objet);
+        } catch (Exception $ex) {
+            echo "<h4>*** échec de la requête ***</h4>" . $ex->getMessage();
+        }
+         try {
+            $unTypeChambre = TypeChambreDAO::getOneById($idTypeChambre);
+            var_dump($objet);
+        } catch (Exception $ex) {
+            echo "<h4>*** échec de la requête ***</h4>" . $ex->getMessage();
+        }
         $nbChambres = 3;
         try {
             $idTest3 = array();
-            $idTest3 [] = $unEtablissement->getId();
+            $idTest3 [] = $unEtab->getId();
             $idTest3 [] = $unTypeChambre->getId();
-            $objet2 = new Offre($unEtablissement, $unTypeChambre, $nbChambres);
-            $ok = OffreDAO::insert($objet2);
+            $uneOffre = new Offre($unEtab, $unTypeChambre, $nbChambres);
+            $ok = OffreDAO::insert($uneOffre);
 
             if ($ok) {
                 echo "<h4>ooo réussite de l'insertion ooo</h4>";
@@ -69,17 +85,11 @@ Tanguy');
         }
         
          // Test n°4
-        $unEtablissement = new Etablissement('0352072M', 'La Joliverie', '29 rue paul bellamy', '85110', '
-Chantonnay', 'abcdefghij', 'contact@la-joliverie.com', 1, '
-Monsieur', 'MENSSION', '
-Tanguy');
-        $unTypeChambre = new TypeChambre("C1", "1 lit");
-        $nbChambres = 3;
+        echo "<h3>4- delete</h3>";
         try {
             $idTest4 = array();
-            $idTest4 [] = $unEtablissement->getId();
+            $idTest4 [] = $unEtab->getId();
             $idTest4 [] = $unTypeChambre->getId();
-            $objet2 = new Offre($unEtablissement, $unTypeChambre, $nbChambres);
             $ok = OffreDAO::delete($idTest4);
             if ($ok) {
                 echo "<h4>ooo réussite de la suppression ooo</h4>";

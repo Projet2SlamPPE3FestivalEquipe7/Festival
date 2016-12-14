@@ -44,20 +44,20 @@ function modifierOffreHebergement($connexion, $idEtab, $idTypeChambre, $nbChambr
 
 // Retourne le nombre de chambres offertes pour l'id étab et l'id type chambre 
 // transmis
-function obtenirNbOffre($connexion, $idEtab, $idTypeChambre) {
-    $req = "SELECT nombreChambres FROM Offre WHERE idEtab=:idEtab AND 
-        idTypeChambre=:idTypeCh";
-    $stmt = $connexion->prepare($req);
-    $stmt->bindParam(':idEtab', $idEtab);
-    $stmt->bindParam(':idTypeCh', $idTypeChambre);
-    $stmt->execute();
-    $ok = $stmt->fetchColumn();
-    if ($ok) {
-        return $ok;
-    } else {
-        return 0;
-    }
-}
+//function obtenirNbOffre($connexion, $idEtab, $idTypeChambre) {
+//    $req = "SELECT nombreChambres FROM Offre WHERE idEtab=:idEtab AND 
+//        idTypeChambre=:idTypeCh";
+//    $stmt = $connexion->prepare($req);
+//    $stmt->bindParam(':idEtab', $idEtab);
+//    $stmt->bindParam(':idTypeCh', $idTypeChambre);
+//    $stmt->execute();
+//    $ok = $stmt->fetchColumn();
+//    if ($ok) {
+//        return $ok;
+//    } else {
+//        return 0;
+//    }
+//}
 
 // Retourne false si le nombre de chambres transmis est inférieur au nombre de 
 // chambres occupées pour l'établissement et le type de chambre transmis 

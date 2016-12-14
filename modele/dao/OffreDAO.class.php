@@ -38,6 +38,8 @@ class OffreDAO implements IDAO {
 
     public static function delete($id) {
         $ok = false;
+        $idEtab = $id[0];
+        $idTypeChambre = $id[1];
         $requete = "DELETE FROM Offre WHERE idEtab = :IdEtab AND idTypeChambre = :IdTypeChambre";
         $stmt = Bdd::getPdo()->prepare($requete);
         $stmt->bindParam(':IdEtab', $idEtab);
@@ -109,13 +111,12 @@ class OffreDAO implements IDAO {
         return ($ok && $stmt->rowCount() > 0); 
     }
     
-    public static function nbOffre($idEtab, $idTypeChambre){
-        
+    public static function obtenirNbOffre($connexion, $idEtab, $idTypeChambre) {
     $req = "SELECT nombreChambres FROM Offre WHERE idEtab=:idEtab AND 
-    idTypeChambre=:idTypeChambre";
+        idTypeChambre=:idTypeCh";
     $stmt = $connexion->prepare($req);
     $stmt->bindParam(':idEtab', $idEtab);
-    $stmt->bindParam(':idTypeChambre', $idTypeChambre);
+    $stmt->bindParam(':idTypeCh', $idTypeChambre);
     $stmt->execute();
     $ok = $stmt->fetchColumn();
     if ($ok) {
@@ -124,4 +125,6 @@ class OffreDAO implements IDAO {
         return 0;
     }
 }
+    
+  
 }
